@@ -12,7 +12,8 @@ url1<-"http://tidesandcurrents.noaa.gov/api/datagetter?begin_date="
 url2<-"&end_date="
 url3<-"&station="
 url4<-"&product="
-url5<-"&interval=h&datum=MLLW&units=metric&time_zone=lst_ldt&application=DRBC&format=csv"
+url5<-"&interval=h&datum=MLLW&units=metric&time_zone=gmt&application=DRBC&format=csv"
+# Time zone for data is GMT
 
 for (yyy in 1:2){ # Loop for locations
  if (yyy==1){
@@ -40,7 +41,7 @@ for (yyy in 1:2){ # Loop for locations
     Product="water_level"
   }
   fileURL<-paste0(url1, BeginDate, url2, EndDate, url3, PORTS.Station, url4, Product, url5)
-  myfilename=paste0(PORTS.name, Product, ".txt")
+  myfilename=paste0(PORTS.name, Product, "_RAW.csv")
   download.file(fileURL, destfile=myfilename)
   
  }
