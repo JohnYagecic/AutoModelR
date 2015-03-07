@@ -1,0 +1,54 @@
+# Translation of the hydrodynamic model automation files into R.
+# Both original Excel VBA and new R scripts developed by John Yagecic, P.E.
+#  JYagecic@gmail.com
+
+
+setwd("~/AutoModelR")
+
+# Raw predictions are hourly, so use these as the basis of an hourly data frame
+# LPR for Lewes Predicted Raw
+LPR<-read.csv("Lewespredictions_RAW.csv")
+LPR$Date.Time<-strptime(LPR$Date.Time, format("%Y-%m-%d %H:%M"))
+names(LPR)<-c("GMT","LPR")
+LPR$LPRnumdat<-as.numeric(LPR$GMT)
+
+# CPR for C&D Canal Predicted Raw
+CPR<-read.csv("CandDpredictions_RAW.csv")
+CPR$Date.Time<-strptime(CPR$Date.Time, format("%Y-%m-%d %H:%M"))
+names(CPR)<-c("GMT","CPR")
+CPR$CPRnumdat<-as.numeric(CPR$GMT)
+
+# LOR is Lewes Observed water surface Raw
+LOR<-read.csv("Leweswater_level_RAW.csv")
+LOR$Date.Time<-strptime(LOR$Date.Time, format("%Y-%m-%d %H:%M"))
+# Limit to date and level columns for clarity
+LOR<-LOR[,1:2]
+names(LOR)<-c("GMT","LOR")
+LOR$LORnumdat<-as.numeric(LOR$GMT)
+
+# COR is C&D Canal Observed water surface Raw
+COR<-read.csv("CandDwater_level_RAW.csv")
+COR$Date.Time<-strptime(COR$Date.Time, format("%Y-%m-%d %H:%M"))
+# Limit to date and level columns for clarity
+COR<-COR[,1:2]
+names(COR)<-c("GMT","COR")
+COR$CORnumdat<-as.numeric(COR$GMT)
+
+head(LOR)
+head(COR)
+
+head(LPR)
+head(CPR)
+
+AllTidalData<-merge(LPR, CPR, by.x="LPRnumdat", by.y="CPRnumdat", all.x=T)
+AllTidalData<-AllTidalData[,-4] # get rid of extra GMT column
+
+AllTidalData<-merge(AllTidalData, LOR, by.x="LPRnumdat", by.y="LORnumdat", all.x=T)
+AllTidalData<-AllTidalData[,-5] # get rid of extra GMT column
+head(AllTidalData)
+
+AllTidalData<-merge(AllTidalData, COR, by.x="LPRnumdat", by.y="CORnumdat", all.x=T)
+AllTidalData<-AllTidalData[,-6] # get rid of extra GMT column
+head(AllTidalData)
+
+
