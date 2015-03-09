@@ -25,6 +25,7 @@ LOR$Date.Time<-strptime(LOR$Date.Time, format("%Y-%m-%d %H:%M"))
 LOR<-LOR[,1:2]
 names(LOR)<-c("GMT","LOR")
 LOR$LORnumdat<-as.numeric(LOR$GMT)
+LastLORnum<-LOR$LORnumdat[nrow(LOR)]  # note numeric date-time of last observation
 
 # COR is C&D Canal Observed water surface Raw
 COR<-read.csv("CandDwater_level_RAW.csv")
@@ -33,6 +34,8 @@ COR$Date.Time<-strptime(COR$Date.Time, format("%Y-%m-%d %H:%M"))
 COR<-COR[,1:2]
 names(COR)<-c("GMT","COR")
 COR$CORnumdat<-as.numeric(COR$GMT)
+LastCORnum<-COR$CORnumdat[nrow(COR)] # note numeric date-time of last observation
+
 
 head(LOR)
 head(COR)
@@ -50,5 +53,20 @@ head(AllTidalData)
 AllTidalData<-merge(AllTidalData, COR, by.x="LPRnumdat", by.y="CORnumdat", all.x=T)
 AllTidalData<-AllTidalData[,-6] # get rid of extra GMT column
 head(AllTidalData)
+
+# Below eliminates rows with NA in first column.  This is needed to address ambiguity during 
+# transitions between EST and EDT
+AllTidalData<-AllTidalData[complete.cases(AllTidalData[,1]),]
+
+
+# Withing observation range, replace missing data with predictions
+for (i in 1:nrow(AllTidalData)){
+  if (is.na(AllTidalData[i,5]) & (AllTidalData[i,1] < LastLORnum)){
+    AllTidalData[i,5]<-AllTidalData[i,3]
+  }
+  if (is.na(AllTidalData[i,6]) & (AllTidalData[i,1] < LastCORnum)){
+    AllTidalData[i,6]<-AllTidalData[i,4]
+  }
+}
 
 
