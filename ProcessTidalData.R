@@ -58,8 +58,24 @@ head(AllTidalData)
 # transitions between EST and EDT
 AllTidalData<-AllTidalData[complete.cases(AllTidalData[,1]),]
 
+# Plot MLLW time series to working directory
+png(file="LewesWSE.png")
+plot(AllTidalData$GMT.x, AllTidalData$LPR, type="l", xlab="Date (GMT)", col="blue",
+     ylab="WSE Meters (MLLW)", main="Water Surface Elevations at Lewes, DE")
+points(AllTidalData$GMT.x, AllTidalData$LOR, type="l", col="red")
+legend("topleft", c("Predicted", "Observed"), col=c("blue", "red"), lty=c(1,1))
+dev.off()
 
-# Withing observation range, replace missing data with predictions
+png(file="CandDWSE.png")
+plot(AllTidalData$GMT.x, AllTidalData$CPR, type="l", xlab="Date (GMT)", col="blue",
+     ylab="WSE Meters (MLLW)", main="Water Surface Elevations at C&D Canal")
+points(AllTidalData$GMT.x, AllTidalData$COR, type="l", col="red")
+legend("topleft", c("Predicted", "Observed"), col=c("blue", "red"), lty=c(1,1))
+dev.off()
+
+
+
+# Within observation range, replace missing data with predictions
 for (i in 1:nrow(AllTidalData)){
   if (is.na(AllTidalData[i,5]) & (AllTidalData[i,1] < LastLORnum)){
     AllTidalData[i,5]<-AllTidalData[i,3]
@@ -68,5 +84,18 @@ for (i in 1:nrow(AllTidalData)){
     AllTidalData[i,6]<-AllTidalData[i,4]
   }
 }
+
+# Add columns with WSE converted to NGVD
+LewesToNGVD=0.569
+CandDToNGVD=0.236
+
+AllTidalData$LPNGVD<-AllTidalData$LPR-LewesToNGVD
+AllTidalData$LONGVD<-AllTidalData$LOR-LewesToNGVD
+AllTidalData$CPNGVD<-AllTidalData$CPR-CandDToNGVD
+AllTidalData$CONGVD<-AllTidalData$COR-CandDToNGVD
+
+AllTidalData
+
+write.table(AllTidalData, file="AllTidalData.csv", sep=",", row.names=FALSE)
 
 
