@@ -26,19 +26,19 @@ for (jjj in 1:2){
   }
   
   Param<-"00060"  # Parameter code for discharge CFS
-  Discharge<-retrieveNWISData(siteNo, Param, BeginDate, EndDate)
+  Discharge<-readNWISdv(siteNo, Param, BeginDate, EndDate)
   
-  names(Discharge)<-c("Agency", "Station", "Date", "Discharge.CFS", "Flag")
+  names(Discharge)<-c("Agency", "Station", "Date", "Flag", "Discharge.CFS")
   
   # below replaces NA discharge with most recent quantified
   # if first record is NA, uses central tendancy value from above
   for (iii in 1:nrow(Discharge)){
-    if (is.na(Discharge[iii,4])==FALSE){
-      lastQ<-Discharge[iii,4]
+    if (is.na(Discharge[iii,5])==FALSE){
+      lastQ<-Discharge[iii,5]
     }
-    if (is.na(Discharge[iii,4])==TRUE){
-      Discharge[iii,4]<-lastQ
-      Discharge[iii,5]<-"Replaced NA"
+    if (is.na(Discharge[iii,5])==TRUE){
+      Discharge[iii,5]<-lastQ
+      Discharge[iii,4]<-"Replaced NA"
     }
   }
   write.table(Discharge, file=outname, sep=",", row.names=FALSE)
