@@ -4,6 +4,7 @@
 
 
 setwd("~/AutoModelR")
+myToday<-as.character(format(Sys.Date(), "%m/%d/%Y"))
 
 # Raw predictions are hourly, so use these as the basis of an hourly data frame
 # LPR for Lewes Predicted Raw
@@ -61,14 +62,16 @@ AllTidalData<-AllTidalData[complete.cases(AllTidalData[,1]),]
 # Plot MLLW time series to working directory
 png(file="LewesWSE.png")
 plot(AllTidalData$GMT.x, AllTidalData$LPR, type="l", xlab="Date (GMT)", col="blue",
-     ylab="WSE Meters (MLLW)", main="Water Surface Elevations at Lewes, DE")
+     ylab="WSE Meters (MLLW)",
+     main=paste0("Water Surface Elevations at Lewes, DE\nData Retrieved ", myToday))
 points(AllTidalData$GMT.x, AllTidalData$LOR, type="l", col="red")
 legend("topleft", c("Predicted", "Observed"), col=c("blue", "red"), lty=c(1,1))
 dev.off()
 
 png(file="CandDWSE.png")
 plot(AllTidalData$GMT.x, AllTidalData$CPR, type="l", xlab="Date (GMT)", col="blue",
-     ylab="WSE Meters (MLLW)", main="Water Surface Elevations at C&D Canal")
+     ylab="WSE Meters (MLLW)",
+     main=paste0("Water Surface Elevations at C&D Canal\nData Retrieved ", myToday))
 points(AllTidalData$GMT.x, AllTidalData$COR, type="l", col="red")
 legend("topleft", c("Predicted", "Observed"), col=c("blue", "red"), lty=c(1,1))
 dev.off()
