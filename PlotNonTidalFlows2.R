@@ -1,5 +1,7 @@
 setwd("~/AutoModelR")
 
+myToday<-as.character(format(Sys.Date(), "%m/%d/%Y"))
+
 for (jjj in 1:2){
    # Two loops through, first for Delaware, second for Schuylkill
   if (jjj==1){
@@ -40,7 +42,7 @@ for (jjj in 1:2){
   RivAll<-rbind(RivAll, RivAHPStemp[,1:2]) # 
   RivAll<-RivAll[order(RivAll$Date),]
   
-  PlotTitle=paste0(PlotTitle, "\nData Retrieved ", Sys.Date()) # add generation date to plot title
+  PlotTitle=paste0(PlotTitle, "\nData Retrieved ", myToday) # add generation date to plot title
   
   png(file=PNGout)
   plot(RivAll$Date, RivAll$Discharge, col="black", type="l",
